@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lịch trực ca & Điều ca — PX Nhiên liệu, NMNĐ Sông Hậu 1</title>
+<style>
+:root{
+  --navy:#0A2A4A; --blue:#0083C7; --green:#00B050;
+  --navy-2:#0d3760; --bg:#f4f7fa; --card:#ffffff; --border:#e2e8f0;
+  --text:#16233a; --muted:#5b6b82; --red:#d93025; --amber:#b7791f;
+  --green-bg:#e6f7ec; --amber-bg:#fff6e0; --red-bg:#fdeceb; --grey-bg:#eef1f5;
+  --radius:14px; --shadow:0 2px 10px rgba(10,42,74,.08), 0 1px 2px rgba(10,42,74,.06);
+  --font-display:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-body:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+h1,h2,h3,h4,.brand{font-family:var(--font-display);}
+
+/* ---------- layout ---------- */
+.app{display:flex; min-height:100vh;}
+.sidebar{
+  width:248px; flex:0 0 248px; background:linear-gradient(180deg,var(--navy) 0%, var(--navy-2) 100%);
+  color:#fff; padding:22px 14px; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{font-size:17px; font-weight:700; letter-spacing:.2px; padding:0 8px 4px; line-height:1.3;}
+.brand small{display:block; font-weight:400; font-size:11.5px; opacity:.7; margin-top:3px;}
+.nav{margin-top:22px; display:flex; flex-direction:column; gap:3px;}
+.nav button{
+  all:unset; cursor:pointer; display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:10px; font-size:13.5px; color:#dbe6f3;
+  transition:background .15s, color .15s;
+}
+.nav button .ic{font-size:15px; width:18px; text-align:center;}
+.nav button:hover{background:rgba(255,255,255,.08); color:#fff;}
+.nav button.active{background:var(--blue); color:#fff; font-weight:600;}
+.side-foot{margin-top:26px; padding:12px; background:rgba(255,255,255,.06); border-radius:10px; font-size:11px; color:#b9c9dd; line-height:1.5;}
+
+.main{flex:1; min-width:0; padding:26px 32px 60px;}
+.view{display:none;}
+.view.active{display:block; animation:fade .25s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+.pagehead{margin-bottom:20px;}
+.pagehead h1{font-size:22px; margin:0 0 4px; color:var(--navy);}
+.pagehead p{margin:0; color:var(--muted); font-size:13.5px; max-width:900px; line-height:1.55;}
+
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:20px; margin-bottom:18px;
+}
+.card h2{font-size:15px; margin:0 0 14px; color:var(--navy); display:flex; align-items:center; gap:8px;}
+.card h2 .tag{background:var(--blue); color:#fff; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:20px; font-family:var(--font-body);}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+@media (max-width:980px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+/* ---------- form controls ---------- */
+label{display:block; font-size:12px; font-weight:600; color:var(--navy); margin:0 0 5px;}
+select,input[type=date]{
+  width:100%; padding:9px 11px; border:1.5px solid var(--border); border-radius:9px;
+  font-size:13.5px; font-family:var(--font-body); color:var(--text); background:#fff;
+}
+select:focus,input:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,131,199,.12);}
+.field{margin-bottom:14px;}
+.btn{
+  all:unset; cursor:pointer; background:var(--blue); color:#fff; font-weight:700; font-size:13.5px;
+  padding:11px 22px; border-radius:10px; text-align:center; transition:background .15s, transform .1s;
+  font-family:var(--font-body); display:inline-block;
+}
+.btn:hover{background:#0072ac;}
+.btn:active{transform:scale(.98);}
+.btn.ghost{background:transparent; color:var(--blue); border:1.5px solid var(--blue);}
+.btn.small{padding:6px 12px; font-size:12px; border-radius:8px;}
+
+/* ---------- pills / badges ---------- */
+.pill{display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11.5px; font-weight:700;}
+.pill.green{background:var(--green-bg); color:#0a7a3d;}
+.pill.yellow{background:var(--amber-bg); color:var(--amber);}
+.pill.red{background:var(--red-bg); color:var(--red);}
+.pill.grey{background:var(--grey-bg); color:var(--muted);}
+
+.kip-chip{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px; font-weight:800; font-size:12.5px; color:#fff;}
+.kA{background:#0083C7;} .kB{background:#00B050;} .kC{background:#8b5cf6;} .kD{background:#e8912d;} .kE{background:#d93025;}
+
+/* ---------- calendar ---------- */
+.cal-wrap{overflow-x:auto;}
+.cal-grid{display:grid; grid-template-columns:repeat(7,minmax(96px,1fr)); gap:6px; min-width:760px;}
+.cal-dow{font-size:11px; font-weight:700; color:var(--muted); text-align:center; padding:4px 0;}
+.cal-cell{
+  border:1px solid var(--border); border-radius:10px; padding:7px 8px; background:#fff; min-height:92px;
+  position:relative; cursor:pointer; transition:box-shadow .12s, border-color .12s;
+}
+.cal-cell:hover{box-shadow:0 3px 10px rgba(10,42,74,.12); border-color:var(--blue);}
+.cal-cell.empty{background:transparent; border:none; cursor:default;}
+.cal-cell.empty:hover{box-shadow:none;}
+.cal-cell.sun .cal-date{color:var(--red);}
+.cal-cell.away{background:#fbf7ee;}
+.cal-date{font-size:12px; font-weight:700; color:var(--navy);}
+.cal-shifts{margin-top:6px; display:flex; flex-direction:column; gap:3px; font-size:10.5px;}
+.cal-shifts .row{display:flex; align-items:center; gap:5px;}
+.cal-shifts .lbl{color:var(--muted); width:16px; font-weight:700;}
+.cal-off{margin-top:5px; font-size:9.5px; color:var(--muted);}
+
+/* ---------- table ---------- */
+.table-wrap{overflow-x:auto; border-radius:10px; border:1px solid var(--border);}
+table{border-collapse:collapse; width:100%; font-size:12.5px;}
+thead th{
+  background:var(--navy); color:#fff; text-align:left; padding:9px 10px; font-weight:600;
+  font-size:11.5px; white-space:nowrap; position:sticky; top:0; z-index:1;
+}
+tbody td{padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top;}
+tbody tr:nth-child(even){background:#fafcfe;}
+tbody tr.rowGreen{background:var(--green-bg) !important;}
+tbody tr.rowYellow{background:var(--amber-bg) !important;}
+tbody tr.rowRed{background:var(--red-bg) !important;}
+tbody tr.rowGrey{background:var(--grey-bg) !important;}
+.nowrap{white-space:nowrap;}
+.muted{color:var(--muted);}
+.small{font-size:11px;}
+
+/* ---------- result panel ---------- */
+.result-box{border:1.5px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px; background:#fafcfe;}
+.result-box.pa-priority{border-color:var(--blue); background:#f2f9fd;}
+.result-box h3{margin:0 0 6px; font-size:13px; color:var(--navy); display:flex; align-items:center; gap:8px; justify-content:space-between;}
+.result-box h3 .num{background:var(--navy); color:#fff; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; margin-right:6px;}
+.result-box p{margin:0; font-size:13px; line-height:1.6; color:var(--text);}
+.result-box .note{color:var(--muted); font-size:11.5px; margin-top:6px;}
+.warn-22{margin-top:4px; padding:8px 11px; border-radius:8px; background:var(--amber-bg); color:var(--amber); font-size:12px; font-weight:600;}
+.warn-22.ok{background:var(--green-bg); color:#0a7a3d;}
+
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:10px;}
+.legend span{display:inline-flex; align-items:center; gap:5px;}
+
+.helpsteps{counter-reset:step; list-style:none; padding:0; margin:0;}
+.helpsteps li{position:relative; padding:0 0 16px 32px; font-size:13px; line-height:1.6; color:var(--text);}
+.helpsteps li::before{counter-increment:step; content:counter(step); position:absolute; left:0; top:0; width:22px; height:22px; background:var(--blue); color:#fff; border-radius:50%; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;}
+.helpsteps b{color:var(--navy);}
+
+.safety-table td, .safety-table th{text-align:center;}
+.safety-table td.ok{background:var(--green-bg); color:#0a7a3d; font-weight:700;}
+.safety-table td.bad{background:var(--red-bg); color:var(--red); font-weight:700;}
+
+footer.credit{margin-top:30px; font-size:11px; color:var(--muted); text-align:center;}
+::selection{background:rgba(0,131,199,.25);}
+.filters{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; align-items:flex-end;}
+.filters .field{margin-bottom:0; min-width:150px;}
+.searchbox{position:relative;}
+.badge-count{font-size:11px; color:var(--muted); margin-left:6px; font-weight:500;}
+
+/* ---------- reminders (nhac nho dieu ca) ---------- */
+.nav-badge{margin-left:auto; background:var(--red); color:#fff; font-size:10px; font-weight:800; padding:1px 7px; border-radius:20px; line-height:1.5;}
+#globalReminderBanner{display:none; margin-bottom:16px;}
+.reminder-banner{
+  background:linear-gradient(90deg, #fff3d6, #ffe6b3); border:1.5px solid var(--amber); color:#7a4d00;
+  border-radius:12px; padding:12px 16px; font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:10px;
+  box-shadow:var(--shadow); animation:pulseGlow 2.2s ease-in-out infinite;
+}
+@keyframes pulseGlow{0%,100%{box-shadow:var(--shadow);} 50%{box-shadow:0 0 0 4px rgba(183,121,31,.15), var(--shadow);}}
+.linklike{all:unset; cursor:pointer; color:var(--blue); font-weight:800; text-decoration:underline;}
+.btn-sm{
+  all:unset; cursor:pointer; display:inline-block; background:var(--blue); color:#fff; font-weight:700; font-size:11.5px;
+  padding:7px 12px; border-radius:8px; margin:4px 6px 0 0; font-family:var(--font-body);
+}
+.btn-sm:hover{background:#0072ac;}
+.btn-sm.danger{background:var(--red-bg); color:var(--red);}
+.btn-sm.danger:hover{background:#fadbd8;}
+.btn-sm.ghost{background:transparent; border:1.5px solid var(--blue); color:var(--blue); padding:6.5px 12px;}
+.rem-save-btn{background:var(--green); margin-top:8px;}
+.rem-save-btn:hover{background:#00913f;}
+.reminder-card{border:1.5px solid var(--border); border-radius:12px; padding:13px 15px; margin-bottom:10px; background:#fafcfe;}
+.reminder-card.rem-urgent{border-color:var(--amber); background:var(--amber-bg);}
+.reminder-card.rem-today{border-color:var(--red); background:var(--red-bg);}
+.reminder-card.rem-upcoming{border-color:var(--border); background:#fff;}
+.reminder-card.rem-past{border-color:var(--border); background:var(--grey-bg); opacity:.75;}
+.reminder-card.rem-done{border-color:var(--green); background:var(--green-bg); opacity:.8;}
+.rem-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap;}
+.rem-status{font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.3px;}
+.rem-date{font-size:12.5px; font-weight:700; color:var(--navy);}
+.rem-body{font-size:13px; line-height:1.55; color:var(--text);}
+.rem-actions{margin-top:6px;}
+.rem-form-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;}
+@media (max-width:980px){.rem-form-grid{grid-template-columns:1fr;}}
+.storage-warn{background:var(--red-bg); color:var(--red); border-radius:10px; padding:10px 14px; font-size:12.5px; margin-bottom:14px; display:none;}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar">
+    <div class="brand">Lịch trực ca &amp; Điều ca<small>PX Nhiên liệu — NMNĐ Sông Hậu 1 · T8-T9/2026</small></div>
+    <div class="nav" id="navList">
+      <button data-view="overview" class="active"><span class="ic">🏠</span> Tổng quan</button>
+      <button data-view="calendar"><span class="ic">📅</span> Lịch trực ca</button>
+      <button data-view="tool"><span class="ic">🔁</span> Điều ca khi nghỉ phép</button>
+      <button data-view="reminders"><span class="ic">🔔</span> Nhắc nhở điều ca<span class="nav-badge" id="navReminderBadge" style="display:none;"></span></button>
+      <button data-view="matrix"><span class="ic">🧮</span> Ma trận điều ca</button>
+      <button data-view="cong"><span class="ic">📊</span> Bảng công tháng</button>
+      <button data-view="roster"><span class="ic">👥</span> Danh sách kíp</button>
+      <button data-view="guide"><span class="ic">📘</span> Hướng dẫn &amp; 9 phương án</button>
+    </div>
+    <div class="side-foot">Dữ liệu 01/08 – 30/09/2026 · Kíp B (nhóm chính) tạm rời đảo ca 20/08–13/09 (đi BDSC định kỳ). Trang chạy hoàn toàn offline, không cần kết nối máy chủ.</div>
+  </nav>
+
+  <main class="main">
+    <div class="storage-warn" id="remStorageWarn">⚠ Trình duyệt này đang chặn lưu trữ cục bộ (localStorage) — VD do mở file ở chế độ ẩn danh/riêng tư. Danh sách "Nhắc nhở điều ca" vẫn dùng được nhưng sẽ MẤT khi đóng tab này. Mở file bằng cửa sổ trình duyệt thông thường để nhắc nhở được lưu lại giữa các lần mở.</div>
+    <div id="globalReminderBanner"></div>
+
+    <!-- ===================== OVERVIEW ===================== -->
+    <section class="view active" id="view-overview">
+      <div class="pagehead">
+        <h1>Tổng quan hệ thống</h1>
+        <p>Công cụ quản lý lịch trực ca 3 ca 5 kíp và tự động đề xuất phương án điều ca khi có người nghỉ phép, tuân thủ quy định nghỉ giữa 2 ca ≥12h theo Bộ luật Lao động.</p>
+      </div>
+      <div class="grid3" id="statCards"></div>
+      <div class="card">
+        <h2>🧭 Cách dùng nhanh</h2>
+        <ol class="helpsteps">
+          <li><b>Lịch trực ca:</b> xem ai trực ca sáng/chiều/đêm mỗi ngày, kíp nào đang nghỉ — bấm vào 1 ngày để xem chi tiết từng vị trí.</li>
+          <li><b>Điều ca khi nghỉ phép:</b> chọn vị trí, kíp, ngày nghỉ, ca nghỉ của người xin nghỉ → hệ thống tự tính 5 phương án điều ca, đã kiểm tra an toàn ≥12h nghỉ. Bấm <b>💾 Lưu nhắc nhở</b> dưới phương án đã chọn để hệ thống tự nhắc trước 1 ngày.</li>
+          <li><b>🔔 Nhắc nhở điều ca:</b> xem lại các việc điều ca đã lưu, có banner cảnh báo ngay khi mở trang nếu có việc HÔM NAY/NGÀY MAI, và nút soạn sẵn email nhắc người được điều ca đi thực hiện.</li>
+          <li><b>Ma trận điều ca:</b> tra cứu sẵn kíp bù an toàn cho từng ngày — từng ca trong toàn bộ 2 tháng.</li>
+          <li><b>Bảng công:</b> theo dõi số công mỗi kíp đã trực trong tháng để giữ đúng 22 công/người.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== CALENDAR ===================== -->
+    <section class="view" id="view-calendar">
+      <div class="pagehead">
+        <h1>Lịch trực ca</h1>
+        <p>Màu ứng với từng kíp (A–E). Bấm vào 1 ngày để xem chi tiết ai trực ở từng vị trí.</p>
+      </div>
+      <div class="card">
+        <div class="filters">
+          <div class="field">
+            <label>Nhóm</label>
+            <select id="calGroup">
+              <option value="main">Nhóm chính (TKNL, MTĐK, CSU, SR, Băng tải, Tro xỉ, ĐĐC)</option>
+              <option value="lx">Lái xe chuyên dụng</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tháng</label>
+            <select id="calMonth">
+              <option value="8">Tháng 08/2026</option>
+              <option value="9">Tháng 09/2026</option>
+            </select>
+          </div>
+        </div>
+        <div class="cal-wrap"><div class="cal-grid" id="calGrid"></div></div>
+        <div class="legend" id="calLegend"></div>
+      </div>
+      <div class="card" id="dayDetailCard" style="display:none;">
+        <h2 id="dayDetailTitle">Chi tiết ngày</h2>
+        <div id="dayDetailBody"></div>
+      </div>
+    </section>
+
+    <!-- ===================== TOOL ===================== -->
+    <section class="view" id="view-tool">
+      <div class="pagehead">
+        <h1>Điều ca khi nghỉ phép</h1>
+        <p>Nhập thông tin người xin nghỉ — hệ thống tự tra Ma trận an toàn ≥12h và đưa ra 5 phương án điều ca, xếp theo thứ tự ưu tiên nên dùng.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h2>📝 Thông tin nghỉ phép</h2>
+          <div class="field"><label>Vị trí</label><select id="tVitri"></select></div>
+          <div class="field"><label>Kíp</label><select id="tKip">
+            <option value="A">Kíp A</option><option value="B">Kíp B</option><option value="C">Kíp C</option>
+            <option value="D">Kíp D</option><option value="E">Kíp E</option></select></div>
+          <div class="field"><label>Ngày nghỉ</label><input type="date" id="tNgay" min="2026-08-01" max="2026-09-30" value="2026-08-13"></div>
+          <div class="field"><label>Ca nghỉ</label><select id="tCa">
+            <option>Ca sáng</option><option>Ca chiều</option><option>Ca đêm</option><option>Cả ngày</option></select></div>
+          <button class="btn" id="tCalc" style="width:100%;">Tính phương án điều ca</button>
+        </div>
+        <div class="card">
+          <h2>🛡️ Kết luận an toàn ≥12h nghỉ</h2>
+          <div id="safetySummary" class="muted small">Nhập thông tin và bấm "Tính phương án điều ca" để xem kết quả.</div>
+        </div>
+      </div>
+      <div id="paResults"></div>
+    </section>
+
+    <!-- ===================== REMINDERS (NHAC NHO DIEU CA) ===================== -->
+    <section class="view" id="view-reminders">
+      <div class="pagehead">
+        <h1>🔔 Nhắc nhở điều ca</h1>
+        <p>Lưu lại các phương án điều ca đã chốt để hệ thống tự nhắc <b>trước 1 ngày</b> — vừa hiện thông báo ngay trên trang này (để người sắp lịch không quên), vừa soạn sẵn email nhắc người được điều ca đi thực hiện. Dữ liệu lưu ngay trên trình duyệt của máy đang mở file này (không gửi đi đâu cả).</p>
+      </div>
+
+      <div class="card">
+        <h2>⚙️ Thiết lập nhắc nhở</h2>
+        <div class="grid2">
+          <div class="field">
+            <label>Email của anh/chị (người sắp lịch — dùng cho nút "Tự nhắc")</label>
+            <input type="text" id="remMyEmail" placeholder="vd: truongkip.nl@sonhau1.vn">
+          </div>
+          <div class="field">
+            <label>Thông báo popup của trình duyệt</label>
+            <button class="btn ghost" id="remEnableNotify" style="width:100%;">🔔 Bật thông báo popup khi mở lại trang</button>
+          </div>
+        </div>
+        <p class="muted small" style="margin:4px 0 0;">Thông báo popup chỉ hiện khi trang này đang được mở (trình duyệt không hỗ trợ báo khi tắt hẳn file) — nên dùng kèm email nhắc để chắc chắn không bị quên.</p>
+      </div>
+
+      <div class="card">
+        <h2>➕ Thêm nhắc nhở thủ công</h2>
+        <p class="muted small" style="margin-top:-8px;">Cách nhanh hơn: sang mục "Điều ca khi nghỉ phép", tính phương án rồi bấm nút <b>💾 Lưu nhắc nhở</b> ngay dưới phương án muốn dùng — form dưới đây chỉ dùng khi cần thêm nhắc nhở không qua công cụ tính.</p>
+        <div id="remAddForm" class="rem-form-grid">
+          <div class="field"><label>Ngày thực hiện điều ca</label><input type="date" id="remNgay" min="2026-08-01" max="2026-09-30"></div>
+          <div class="field"><label>Ca</label><select id="remCa"><option>Ca sáng</option><option>Ca chiều</option><option>Ca đêm</option><option>Cả ngày</option></select></div>
+          <div class="field"><label>Vị trí</label><input type="text" id="remVitri" placeholder="VD: VHV Máy bốc dỡ than CSU01"></div>
+          <div class="field"><label>Người nghỉ phép</label><input type="text" id="remNguoiNghi" placeholder="Họ tên / kíp"></div>
+          <div class="field"><label>Phương án (1-5, tuỳ chọn)</label><input type="text" id="remPA" placeholder="VD: 1"></div>
+          <div class="field"><label>Người được điều ca</label><input type="text" id="remNguoiDuoc" placeholder="Họ tên người thực hiện"></div>
+          <div class="field"><label>Email người được điều ca (tuỳ chọn)</label><input type="text" id="remEmailDuoc" placeholder="ten@congty.vn"></div>
+          <div class="field" style="grid-column:1/-1;"><label>Mô tả / ghi chú</label><input type="text" id="remMoTa" placeholder="Chi tiết cách điều ca"></div>
+        </div>
+        <button class="btn" id="remAddBtn" style="margin-top:4px;">💾 Lưu nhắc nhở</button>
+      </div>
+
+      <div class="card">
+        <h2>📋 Danh sách nhắc nhở đã lưu</h2>
+        <div id="reminderListWrap"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MATRIX ===================== -->
+    <section class="view" id="view-matrix">
+      <div class="pagehead">
+        <h1>Ma trận điều ca (nhóm chính)</h1>
+        <p>Bảng tính sẵn cho từng ngày – từng ca (V1/V2/V3), kiểm tra ≥12h nghỉ cả ca trước lẫn ca sau hôm sau. Chỉ áp dụng cho nhóm chính 5 kíp.</p>
+      </div>
+      <div class="card">
+        <div class="filters">
+          <div class="field"><label>Tháng</label><select id="mxMonth"><option value="0">Tất cả</option><option value="8">Tháng 08</option><option value="9">Tháng 09</option></select></div>
+          <div class="field"><label>Ca</label><select id="mxCa"><option value="">Tất cả</option><option value="V1">Ca sáng (V1)</option><option value="V2">Ca chiều (V2)</option><option value="V3">Ca đêm (V3)</option></select></div>
+          <div class="field"><label>Kết luận</label><select id="mxVerdict"><option value="">Tất cả</option><option value="GREEN">🟢 Dùng được</option><option value="YELLOW">🟡 Phải đổi ca hôm sau</option><option value="RED">🔴 Không có kíp tại chỗ</option><option value="UNKNOWN">⚪ Ngoài dữ liệu</option></select></div>
+          <span class="badge-count" id="mxCount"></span>
+        </div>
+        <div class="table-wrap"><table id="mxTable"><thead><tr>
+          <th>Ngày</th><th>Thứ</th><th>Ca cần bù</th><th>Kíp đang trực</th><th>Kíp bù ưu tiên</th><th>Kết luận ưu tiên</th><th>Kíp bù dự phòng</th><th>Kết luận dự phòng</th><th>Xử lý 22 công</th>
+        </tr></thead><tbody id="mxBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ===================== CONG ===================== -->
+    <section class="view" id="view-cong">
+      <div class="pagehead">
+        <h1>Bảng công tháng</h1>
+        <p>Tổng số công trực ca (V1+V2+V3) của mỗi kíp trong tháng — mục tiêu 22 công/người/tháng (kết hợp thêm công hành chính).</p>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>Tháng 08/2026</h2><div class="table-wrap"><table><thead><tr><th>Kíp</th><th>Công ca (V1+V2+V3)</th><th>Trạng thái</th></tr></thead><tbody id="congAugBody"></tbody></table></div></div>
+        <div class="card"><h2>Tháng 09/2026</h2><div class="table-wrap"><table><thead><tr><th>Kíp</th><th>Công ca (V1+V2+V3)</th><th>Trạng thái</th></tr></thead><tbody id="congSepBody"></tbody></table></div></div>
+      </div>
+      <div class="card">
+        <p class="muted small">Lưu ý: nhóm chính có kíp B tạm rời đảo ca 20/08–13/09/2026 (đi bảo dưỡng sửa chữa định kỳ), nên công của kíp B thấp hơn các kíp khác trong giai đoạn này — đã được bù bằng công hành chính, không phải thiếu công.</p>
+      </div>
+    </section>
+
+    <!-- ===================== ROSTER ===================== -->
+    <section class="view" id="view-roster">
+      <div class="pagehead">
+        <h1>Danh sách kíp &amp; nhân sự</h1>
+        <p>Toàn bộ nhân sự theo từng vị trí công việc × từng kíp A–E, và danh sách khối hành chính có thể huy động hỗ trợ.</p>
+      </div>
+      <div class="card">
+        <h2>👥 Nhóm chính (5 kíp A–E)</h2>
+        <div class="table-wrap"><table><thead><tr><th>Vị trí / Chức danh</th><th>Kíp A</th><th>Kíp B</th><th>Kíp C</th><th>Kíp D</th><th>Kíp E</th></tr></thead><tbody id="rosterMainBody"></tbody></table></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h2>🚛 Lái xe chuyên dụng</h2>
+          <div class="table-wrap"><table><thead><tr><th>Kíp A</th><th>Kíp B</th><th>Kíp C</th><th>Kíp D</th><th>Kíp E</th></tr></thead><tbody id="rosterLxBody"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h2>⚓ Nhập đá vôi / xuất thạch cao</h2>
+          <div class="table-wrap"><table><thead><tr><th>Kíp A</th><th>Kíp B</th><th>Kíp C</th><th>Kíp D</th><th>Kíp E</th></tr></thead><tbody id="rosterDvxtcBody"></tbody></table></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>🏢 Trực hành chính (nguồn hỗ trợ khi cần)</h2>
+        <div class="table-wrap"><table><thead><tr><th>Họ và tên</th><th>Chức danh</th><th>Ghi chú</th></tr></thead><tbody id="hcBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ===================== GUIDE ===================== -->
+    <section class="view" id="view-guide">
+      <div class="pagehead">
+        <h1>Hướng dẫn &amp; 9 phương án điều ca</h1>
+        <p>Nguyên tắc chung: mọi phương án đều phải đảm bảo nghỉ ≥12h giữa 2 ca theo Bộ luật Lao động, và giữ đúng 22 công/người/tháng.</p>
+      </div>
+      <div class="card">
+        <h2>⏱️ Bảng khung an toàn chuyển ca (≥12h nghỉ)</h2>
+        <div class="table-wrap"><table class="safety-table">
+          <thead><tr><th>Ca trước ↓ / Ca sau →</th><th>V1 (06-14h)</th><th>V2 (14-22h)</th><th>V3 (22-06h)</th></tr></thead>
+          <tbody id="safetyTableBody"></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <h2>📋 9 nguyên tắc / phương án điều ca (xếp theo thứ tự ưu tiên)</h2>
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;">#</th><th style="width:220px;">Phương án</th><th>Cách thực hiện</th></tr></thead><tbody id="guideRulesBody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <h2>🔗 Vị trí có thể điều chéo cho nhau (cùng cương vị)</h2>
+        <div class="table-wrap"><table><thead><tr><th>Vị trí</th><th>Có thể điều chéo với</th></tr></thead><tbody id="equivBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <footer class="credit">Công cụ nội bộ Phân xưởng Nhiên liệu — NMNĐ Sông Hậu 1 · Dữ liệu tháng 08–09/2026 · Chạy hoàn toàn offline trên trình duyệt. Mục "Nhắc nhở điều ca" lưu dữ liệu bạn nhập ngay trên trình duyệt máy này (localStorage) để nhắc trước 1 ngày — không gửi lên máy chủ nào; email nhắc do bạn chủ động bấm gửi qua phần mềm mail của máy.</footer>
+  </main>
+</div>
+
+<script>
+const DATA = {"daysMain": [{"date": "2026-08-01", "weekday": "T7", "v1": "E", "v2": "D", "v3": "B", "off": ["A", "C"]}, {"date": "2026-08-02", "weekday": "CN", "v1": "A", "v2": "E", "v3": "D", "off": ["B", "C"]}, {"date": "2026-08-03", "weekday": "T2", "v1": "C", "v2": "A", "v3": "E", "off": ["B", "D"]}, {"date": "2026-08-04", "weekday": "T3", "v1": "B", "v2": "C", "v3": "A", "off": ["D", "E"]}, {"date": "2026-08-05", "weekday": "T4", "v1": "D", "v2": "B", "v3": "C", "off": ["A", "E"]}, {"date": "2026-08-06", "weekday": "T5", "v1": "E", "v2": "D", "v3": "B", "off": ["A", "C"]}, {"date": "2026-08-07", "weekday": "T6", "v1": "A", "v2": "E", "v3": "D", "off": ["B", "C"]}, {"date": "2026-08-08", "weekday": "T7", "v1": "C", "v2": "A", "v3": "E", "off": ["B", "D"]}, {"date": "2026-08-09", "weekday": "CN", "v1": "B", "v2": "C", "v3": "A", "off": ["D", "E"]}, {"date": "2026-08-10", "weekday": "T2", "v1": "D", "v2": "B", "v3": "C", "off": ["A", "E"]}, {"date": "2026-08-11", "weekday": "T3", "v1": "E", "v2": "D", "v3": "B", "off": ["A", "C"]}, {"date": "2026-08-12", "weekday": "T4", "v1": "A", "v2": "E", "v3": "D", "off": ["B", "C"]}, {"date": "2026-08-13", "weekday": "T5", "v1": "C", "v2": "A", "v3": "E", "off": ["B", "D"]}, {"date": "2026-08-14", "weekday": "T6", "v1": "B", "v2": "C", "v3": "A", "off": ["D", "E"]}, {"date": "2026-08-15", "weekday": "T7", "v1": "D", "v2": "B", "v3": "C", "off": ["A", "E"]}, {"date": "2026-08-16", "weekday": "CN", "v1": "E", "v2": "D", "v3": "B", "off": ["A", "C"]}, {"date": "2026-08-17", "weekday": "T2", "v1": "A", "v2": "E", "v3": "D", "off": ["B", "C"]}, {"date": "2026-08-18", "weekday": "T3", "v1": "C", "v2": "A", "v3": "E", "off": ["B", "D"]}, {"date": "2026-08-19", "weekday": "T4", "v1": "B", "v2": "C", "v3": "A", "off": ["D", "E"]}, {"date": "2026-08-20", "weekday": "T5", "v1": "E", "v2": "D", "v3": "C", "off": ["A"]}, {"date": "2026-08-21", "weekday": "T6", "v1": "E", "v2": "D", "v3": "C", "off": ["A"]}, {"date": "2026-08-22", "weekday": "T7", "v1": "A", "v2": "E", "v3": "D", "off": ["C"]}, {"date": "2026-08-23", "weekday": "CN", "v1": "A", "v2": "E", "v3": "D", "off": ["C"]}, {"date": "2026-08-24", "weekday": "T2", "v1": "C", "v2": "A", "v3": "E", "off": ["D"]}, {"date": "2026-08-25", "weekday": "T3", "v1": "C", "v2": "A", "v3": "E", "off": ["D"]}, {"date": "2026-08-26", "weekday": "T4", "v1": "D", "v2": "C", "v3": "A", "off": ["E"]}, {"date": "2026-08-27", "weekday": "T5", "v1": "D", "v2": "C", "v3": "A", "off": ["E"]}, {"date": "2026-08-28", "weekday": "T6", "v1": "E", "v2": "D", "v3": "C", "off": ["A"]}, {"date": "2026-08-29", "weekday": "T7", "v1": "E", "v2": "D", "v3": "C", "off": ["A"]}, {"date": "2026-08-30", "weekday": "CN", "v1": "A", "v2": "E", "v3": "D", "off": ["C"]}, {"date": "2026-08-31", "weekday": "T2", "v1": "A", "v2": "E", "v3": "D", "off": ["C"]}, {"date": "2026-09-01", "weekday": "T3", "v1": "C", "v2": "A", "v3": "E", "off": ["D"]}, {"date": "2026-09-02", "weekday": "T4", "v1": "C", "v2": "A", "v3": "E", "off": ["D"]}, {"date": "2026-09-03", "weekday": "T5", "v1": "D", "v2": "C", "v3": "A", "off": ["E"]}, {"date": "2026-09-04", "weekday": "T6", "v1": "D", "v2": "C", "v3": "A", "off": ["E"]}, {"date": "2026-09-05", "weekday": "T7", "v1": "E", "v2": "D", "v3": "C", "off": ["A"]}, {"date": "2026-09-06", "weekday": "CN", "v1": "E", "v2": "D", "v3": "C", "off": ["A"]}, {"date": "2026-09-07", "weekday": "T2", "v1": "A", "v2": "E", "v3": "D", "off": ["C"]}, {"date": "2026-09-08", "weekday": "T3", "v1": "A", "v2": "E", "v3": "D", "off": ["C"]}, {"date": "2026-09-09", "weekday": "T4", "v1": "C", "v2": "A", "v3": "E", "off": ["D"]}, {"date": "2026-09-10", "weekday": "T5", "v1": "C", "v2": "A", "v3": "E", "off": ["D"]}, {"date": "2026-09-11", "weekday": "T6", "v1": "D", "v2": "C", "v3": "A", "off": ["E"]}, {"date": "2026-09-12", "weekday": "T7", "v1": "D", "v2": "C", "v3": "A", "off": ["E"]}, {"date": "2026-09-13", "weekday": "CN", "v1": "E", "v2": "D", "v3": "C", "off": ["A"]}, {"date": "2026-09-14", "weekday": "T2", "v1": "B", "v2": "E", "v3": "D", "off": ["A", "C"]}, {"date": "2026-09-15", "weekday": "T3", "v1": "A", "v2": "B", "v3": "E", "off": ["C", "D"]}, {"date": "2026-09-16", "weekday": "T4", "v1": "C", "v2": "A", "v3": "B", "off": ["D", "E"]}, {"date": "2026-09-17", "weekday": "T5", "v1": "D", "v2": "C", "v3": "A", "off": ["B", "E"]}, {"date": "2026-09-18", "weekday": "T6", "v1": "E", "v2": "D", "v3": "C", "off": ["A", "B"]}, {"date": "2026-09-19", "weekday": "T7", "v1": "B", "v2": "E", "v3": "D", "off": ["A", "C"]}, {"date": "2026-09-20", "weekday": "CN", "v1": "A", "v2": "B", "v3": "E", "off": ["C", "D"]}, {"date": "2026-09-21", "weekday": "T2", "v1": "C", "v2": "A", "v3": "B", "off": ["D", "E"]}, {"date": "2026-09-22", "weekday": "T3", "v1": "D", "v2": "C", "v3": "A", "off": ["B", "E"]}, {"date": "2026-09-23", "weekday": "T4", "v1": "E", "v2": "D", "v3": "C", "off": ["A", "B"]}, {"date": "2026-09-24", "weekday": "T5", "v1": "B", "v2": "E", "v3": "D", "off": ["A", "C"]}, {"date": "2026-09-25", "weekday": "T6", "v1": "A", "v2": "B", "v3": "E", "off": ["C", "D"]}, {"date": "2026-09-26", "weekday": "T7", "v1": "C", "v2": "A", "v3": "B", "off": ["D", "E"]}, {"date": "2026-09-27", "weekday": "CN", "v1": "D", "v2": "C", "v3": "A", "off": ["B", "E"]}, {"date": "2026-09-28", "weekday": "T2", "v1": "E", "v2": "D", "v3": "C", "off": ["A", "B"]}, {"date": "2026-09-29", "weekday": "T3", "v1": "B", "v2": "E", "v3": "D", "off": ["A", "C"]}, {"date": "2026-09-30", "weekday": "T4", "v1": "A", "v2": "B", "v3": "E", "off": ["C", "D"]}], "daysLx": [{"date": "2026-08-01", "weekday": "T7", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-02", "weekday": "CN", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-03", "weekday": "T2", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-04", "weekday": "T3", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-05", "weekday": "T4", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-06", "weekday": "T5", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-07", "weekday": "T6", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-08-08", "weekday": "T7", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-08-09", "weekday": "CN", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-10", "weekday": "T2", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-11", "weekday": "T3", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-12", "weekday": "T4", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-13", "weekday": "T5", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-14", "weekday": "T6", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-15", "weekday": "T7", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-08-16", "weekday": "CN", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-08-17", "weekday": "T2", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-18", "weekday": "T3", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-19", "weekday": "T4", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-20", "weekday": "T5", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-21", "weekday": "T6", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-22", "weekday": "T7", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-23", "weekday": "CN", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-08-24", "weekday": "T2", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-08-25", "weekday": "T3", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-26", "weekday": "T4", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-08-27", "weekday": "T5", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-28", "weekday": "T6", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-08-29", "weekday": "T7", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-30", "weekday": "CN", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-08-31", "weekday": "T2", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-01", "weekday": "T3", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-02", "weekday": "T4", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-03", "weekday": "T5", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-04", "weekday": "T6", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-05", "weekday": "T7", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-06", "weekday": "CN", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-09-07", "weekday": "T2", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-09-08", "weekday": "T3", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-09", "weekday": "T4", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-10", "weekday": "T5", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-11", "weekday": "T6", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-12", "weekday": "T7", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-13", "weekday": "CN", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-14", "weekday": "T2", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-09-15", "weekday": "T3", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-09-16", "weekday": "T4", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-17", "weekday": "T5", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-18", "weekday": "T6", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-19", "weekday": "T7", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-20", "weekday": "CN", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-21", "weekday": "T2", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-22", "weekday": "T3", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-09-23", "weekday": "T4", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}, {"date": "2026-09-24", "weekday": "T5", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-25", "weekday": "T6", "v1": "D", "v2": "A", "v3": "C", "off": ["E"]}, {"date": "2026-09-26", "weekday": "T7", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-27", "weekday": "CN", "v1": "E", "v2": "D", "v3": "A", "off": ["C"]}, {"date": "2026-09-28", "weekday": "T2", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-29", "weekday": "T3", "v1": "C", "v2": "E", "v3": "D", "off": ["A"]}, {"date": "2026-09-30", "weekday": "T4", "v1": "A", "v2": "C", "v3": "E", "off": ["D"]}], "roles": [{"name": "Trưởng kíp nhiên liệu", "roster": {"A": ["Đỗ Minh Nguyên"], "B": ["Võ Ngọc Thái"], "C": ["Lê Trí Linh"], "D": ["Dương Duy Khánh"], "E": ["Nguyễn Đình Toàn (T/S)"]}}, {"name": "MTĐK nhiên liệu", "roster": {"A": ["Đặng Minh Hậu"], "B": ["Trần Hữu Như"], "C": ["Nguyễn Diệp Thiên Vinh"], "D": ["Nguyễn Đức Lộc", "Hoàng Anh Tuấn (T/S)"], "E": ["Phan Đình Vũ", "Bùi Vũ Linh (T/S)"]}}, {"name": "VHV Điều độ cảng", "roster": {"A": ["Trương Hữu Thân"], "B": ["Lê Hải Lâm Thiên Sơn"], "C": ["Nguyễn Bá Trung"], "D": ["Trương Thanh Tú"], "E": ["Ngô Hữu Hiệu"]}}, {"name": "VHV Máy bốc dỡ than CSU01", "roster": {"A": ["Nguyễn Anh Minh", "Kiên Lợi"], "B": ["Nguyễn Thanh Toàn", "Nguyễn Lê Tuấn"], "C": ["Bùi Đông Hải", "Trần Đức Toàn"], "D": ["Nguyễn Văn Mãi", "Võ Minh Nhựt"], "E": ["Đào Xuân Phong", "Võ Hoàng Lâm"]}}, {"name": "VHV Máy bốc dỡ than CSU02", "roster": {"A": ["Đỗ Đông Hằng", "Huỳnh Hữu Thiện"], "B": ["Nguyễn Văn Hiệp", "Nguyễn Tấn Ca"], "C": ["Mai Đức Lộc", "Nguyễn Ngọc Sang"], "D": ["Phan Vũ Anh", "Đặng Văn Thắng"], "E": ["Nguyễn Minh Thái", "Trần Dương Khang"]}}, {"name": "VHV Máy đánh/phá đống SR41", "roster": {"A": ["Quách Văn Cường", "Huỳnh Văn Tân"], "B": ["Trần Trọng Tài", "Trần Văn Khánh Duy"], "C": ["Dương Văn Đậu Em", "Bùi Thanh Tâm (T/S)"], "D": ["Bùi Hữu Phát", "Nguyễn Hữu Nghiêm"], "E": ["Trần Phú Lộc", "Nguyễn Hoàng Phong (T/S)"]}}, {"name": "VHV Máy đánh/phá đống SR42", "roster": {"A": ["Nguyễn Hoàng Thân", "Ngô Minh Hiếu"], "B": ["Nguyễn Hứa Trung Hiếu", "Lê Hoàng Du"], "C": ["Nguyễn Quốc Anh", "Nguyễn Thành Tâm"], "D": ["Trần Văn Lưỡng", "Nguyễn Văn Toàn"], "E": ["Đỗ Ngọc Cắt", "Nguyễn Hải Nhí"]}}, {"name": "VHV Băng tải than Tháp 1-2-3", "roster": {"A": ["Nguyễn Khắc Hưng"], "B": ["Nguyễn Quốc Quy"], "C": ["Phạm Quốc Thoại"], "D": ["Mai Hồ Công Khang"], "E": ["Lê Quốc Thái"]}}, {"name": "VHV Băng tải than Tháp 4-5-6", "roster": {"A": ["Vũ Tiến Thành"], "B": ["Nguyễn Thái Bình"], "C": ["Nguyễn Xuân Cường"], "D": ["Đỗ Kim Tài"], "E": ["Vũ Mạnh Sáng"]}}, {"name": "VHV Băng tải than Tháp 7-Bunker", "roster": {"A": ["Trần Thống Nhứt"], "B": ["Hồ Quang Đạo"], "C": ["Nguyễn Ngọc Hiếu"], "D": ["Huỳnh Thanh Nam"], "E": ["Nguyễn Trọng Vũ"]}}, {"name": "VHV Vận chuyển tro xỉ", "roster": {"A": ["Hồ Văn Yên", "Nguyễn Quang Huy", "Lưu Văn Trung"], "B": ["Nguyễn Thanh Tú", "Nguyễn Tuấn Anh", "Nguyễn Hoàng Minh"], "C": ["Nguyễn Thành Hiệp", "Nguyễn Ngọc Trung", "Phạm Quốc Huy"], "D": ["Đỗ Trung Quân", "Trần Ngọc Hồ", "Nguyễn Sỹ Hưng"], "E": ["Trần Thế Anh", "Lê Quang Trung", "Nguyễn Trung Tín"]}}], "laixeRoster": {"A": ["Trần Công Ghiếc"], "B": ["Trần Văn Hiếu"], "C": ["Nguyễn Văn Thuận"], "D": ["Hoàng Danh Phong"], "E": ["Lê Văn Nhứt"]}, "dvxtcRoster": {"A": ["Nguyễn Văn Khánh"], "B": ["Nguyễn Tuấn Khôi"], "C": ["N/A"], "D": ["Cao Nguyễn Trọng Nhân"], "E": ["Đinh Công Nam"]}, "hanhChinh": [["Hoàng Đình Mạnh", "Quản đốc", ""], ["Nguyễn Quốc Tuấn", "Phó Quản đốc", ""], ["Công Quốc Thịnh", "Phó Quản đốc", ""], ["Thái Thanh Tân", "Tổ trưởng Tổ TNNL", "Chủ trì công tác giao nhận và giám sát lấy mẫu than"], ["Nguyễn Văn Lực", "Tổ phó Tổ TNNL", "Phối hợp thực hiện công tác giao nhận và giám sát lấy mẫu than"], ["Lê Việt Tuấn", "KSQLKT", ""], ["Nguyễn Hữu Phương", "KSQLKT", ""], ["Đoàn Văn Tiến", "Trưởng kíp NL", "Hỗ trợ công tác ATVSLĐ và PCCC"], ["Phạm Văn Dũng", "Chuyên viên", ""], ["Hồ Thị Quỳnh Chi", "Chuyên viên", ""], ["Đinh Công Nam", "VHV Nhập đá vôi/xuất thạch cao", ""], ["Nguyễn Văn Khánh", "VHV Nhập đá vôi/xuất thạch cao", ""], ["Cao Nguyễn Trọng Nhân", "VHV Nhập đá vôi/xuất thạch cao", ""], ["Nguyễn Tuấn Khôi", "VHV Nhập đá vôi/xuất thạch cao", ""], ["Trần Văn Hiếu", "Lái xe chuyên dụng", "Hỗ trợ công tác lu lèn trong kho (tạm rời lịch đảo ca)"], ["Nguyễn Ngọc Hưng", "Chuyên viên", "Giao nhiệm vụ học tập, thi sát hạch cương vị vận hành Hệ thống Nhập đá vôi/xuất thạch cao"]], "equivMap": {"VHV Máy bốc dỡ than CSU01": ["VHV Máy bốc dỡ than CSU02"], "VHV Máy bốc dỡ than CSU02": ["VHV Máy bốc dỡ than CSU01"], "VHV Máy đánh/phá đống SR41": ["VHV Máy đánh/phá đống SR42"], "VHV Máy đánh/phá đống SR42": ["VHV Máy đánh/phá đống SR41"], "VHV Băng tải than Tháp 1-2-3": ["VHV Băng tải than Tháp 4-5-6", "VHV Băng tải than Tháp 7-Bunker"], "VHV Băng tải than Tháp 4-5-6": ["VHV Băng tải than Tháp 1-2-3", "VHV Băng tải than Tháp 7-Bunker"], "VHV Băng tải than Tháp 7-Bunker": ["VHV Băng tải than Tháp 1-2-3", "VHV Băng tải than Tháp 4-5-6"]}, "multiPersonRoles": ["VHV Máy bốc dỡ than CSU01", "VHV Máy bốc dỡ than CSU02", "VHV Máy đánh/phá đống SR41", "VHV Máy đánh/phá đống SR42", "VHV Vận chuyển tro xỉ"], "gapTable": [["V1", "V1", 16], ["V1", "V2", 24], ["V1", "V3", 32], ["V2", "V1", 8], ["V2", "V2", 16], ["V2", "V3", 24], ["V3", "V1", 0], ["V3", "V2", 8], ["V3", "V3", 16]], "bAwayStart": "2026-08-20", "bAwayEnd": "2026-09-13"};
+
+const DATE_INDEX = new Map();
+DATA.daysMain.forEach((d,i)=>DATE_INDEX.set(d.date,i));
+const DATE_INDEX_LX = new Map();
+DATA.daysLx.forEach((d,i)=>DATE_INDEX_LX.set(d.date,i));
+
+const GAP = new Map();
+DATA.gapTable.forEach(([prev,shift,gap])=>GAP.set(prev+"|"+shift, gap));
+
+const CA_LABELS = {V1:"Ca sáng (V1) 06h-14h", V2:"Ca chiều (V2) 14h-22h", V3:"Ca đêm (V3) 22h-06h"};
+const KIP_LETTERS = ["A","B","C","D","E"];
+const VITRI_LIST = DATA.roles.map(r=>r.name).concat(["Lái xe chuyên dụng"]);
+
+function roleObj(name){ return DATA.roles.find(r=>r.name===name); }
+function rosterNames(vitri, kip){
+  if(!kip || kip==="—" ) return [];
+  if(vitri==="Lái xe chuyên dụng") return DATA.laixeRoster[kip]||[];
+  const r = roleObj(vitri);
+  return r ? (r.roster[kip]||[]) : [];
+}
+function rosterStr(vitri, kip){ return rosterNames(vitri,kip).join(", ") || "(chưa rõ)"; }
+
+function statusOfKip(idx, kip){
+  if(idx<0 || idx>=DATA.daysMain.length) return null;
+  const d = DATA.daysMain[idx];
+  if(d.v1===kip) return "V1";
+  if(d.v2===kip) return "V2";
+  if(d.v3===kip) return "V3";
+  if(d.off.includes(kip)) return "Off";
+  return "NA";
+}
+function transitionCheck(prev, shift){
+  if(prev===null) return {ok:null, gap:null};
+  if(prev==="Off") return {ok:true, gap:null};
+  if(prev==="NA") return {ok:false, gap:null};
+  const gap = GAP.get(prev+"|"+shift);
+  return {ok: (gap!==undefined && gap>=12), gap: gap===undefined?null:gap};
+}
+function statusText(status, gap, isPrev){
+  if(status===null) return "Ngoài dữ liệu lịch — cần xác nhận thủ công";
+  if(status==="Off") return isPrev ? "Nghỉ (an toàn)" : "Nghỉ (không ảnh hưởng)";
+  if(status==="NA") return "Không thuộc kíp đang đảo ca hôm đó";
+  const ok = gap!==null && gap>=12;
+  return `${status} → ${gap}h ${ok?"✅":"❌"}`;
+}
+// Danh gia xem 1 kip CU THE co the an toan dam nhan 1 ca CU THE vao ngay idx hay khong (kiem tra
+// ca ngay hom truoc VA ca ngay hom sau theo dung lich goc cua kip do - dung chung cho ca viec chon
+// kip dang RANH (PA1/Ma tran) lan viec "doi ca" 1 kip DANG TRUC sang lam ca khac trong cung ngay
+// (dung cho nguyen tac "don xuong" o PHUONG AN 2 khi nghi ca dem).
+function evaluateKipForShift(kip, idx, shift){
+  const prev = statusOfKip(idx-1, kip);
+  const pc = transitionCheck(prev, shift);
+  const nxt = statusOfKip(idx+1, kip);
+  let nextOk, nextGap;
+  if(pc.ok===true){
+    if(nxt==="Off"){ nextOk=true; nextGap=null; }
+    else if(nxt===null){ nextOk=null; nextGap=null; }
+    else{ const nc=transitionCheck(shift, nxt); nextOk=nc.ok; nextGap=nc.gap; }
+  } else { nextOk=null; nextGap=null; }
+  let verdict;
+  if(pc.ok===true && nextOk===true) verdict="GREEN";
+  else if(pc.ok===true && (nextOk===false || nextOk===null)) verdict="YELLOW";
+  else if(pc.ok===null) verdict="UNKNOWN";
+  else verdict="RED";
+  return {kip, prev, prevGap:pc.gap, prevOk:pc.ok, nxt, nextGap, nextOk, verdict};
+}
+function evaluateCandidates(idx, ca){
+  const d = DATA.daysMain[idx];
+  const out = d.off.map(kip=>evaluateKipForShift(kip, idx, ca));
+  const order={GREEN:0,YELLOW:1,UNKNOWN:2,RED:3};
+  out.sort((a,b)=>order[a.verdict]-order[b.verdict]);
+  return out;
+}
+function congForKip(kip, month){
+  let c=0;
+  for(const d of DATA.daysMain){
+    if(parseInt(d.date.slice(5,7),10)!==month) continue;
+    if(d.v1===kip)c++; if(d.v2===kip)c++; if(d.v3===kip)c++;
+  }
+  return c;
+}
+function congAdvisory(kip, month){
+  const cong = congForKip(kip, month);
+  if(cong>=22) return {cong, html:`Kíp ${kip} đã có <b>${cong}</b> công tháng ${month} — nếu bù thêm ca, phải <b>CHUYỂN BỚT 1 công hành chính</b> của kíp sang ngày khác để giữ tổng 22 công.`, level:"warn"};
+  if(cong===21) return {cong, html:`Kíp ${kip} đang có <b>${cong}</b> công — bù thêm ca này vừa đủ 22 công, không cần điều chỉnh.`, level:"ok"};
+  return {cong, html:`Kíp ${kip} đang có <b>${cong}</b> công (&lt;22) — bù thêm ca này vẫn an toàn, chưa vượt định mức.`, level:"ok"};
+}
+const VERDICT_ICON = {GREEN:"🟢 Dùng được", YELLOW:"🟡 Dùng được — phải đổi ca hôm sau", UNKNOWN:"⚪ Cần xác nhận thủ công", RED:"🔴 Không có kíp tại chỗ đủ điều kiện"};
+const VERDICT_CLASS = {GREEN:"rowGreen", YELLOW:"rowYellow", UNKNOWN:"rowGrey", RED:"rowRed"};
+
+function monthOfDate(dstr){ return parseInt(dstr.slice(5,7),10); }
+function addDays(dstr, n){
+  const [y,m,d] = dstr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m-1, d));
+  dt.setUTCDate(dt.getUTCDate()+n);
+  return dt.toISOString().slice(0,10);
+}
+function fmtVN(dstr){
+  const [y,m,d] = dstr.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+// ---------- Full suggestion engine (mirrors Excel sheet "Quan ly nghi phep & dieu ca") ----------
+function computeSuggestion(vitri, kip, ngayNghi, caNghi){
+  const res = {vitri, kip, ngayNghi, caNghi};
+  if(!vitri || !ngayNghi || !caNghi){
+    res.error = "Vui lòng chọn đầy đủ Vị trí, Ngày nghỉ và Ca nghỉ.";
+    return res;
+  }
+  const isLaiXe = vitri==="Lái xe chuyên dụng";
+  const isWholeDay = caNghi==="Cả ngày";
+  const ca = ({"Ca sáng":"V1","Ca chiều":"V2","Ca đêm":"V3"})[caNghi] || null;
+
+  if(isLaiXe){
+    res.g = "Lái xe chưa có ma trận an toàn riêng — xem lịch Lái xe và tự kiểm tra ≥12h nghỉ.";
+    res.h = "";
+    res.iVerdict = "⚪ Chưa có ma trận cho Lái xe — kiểm tra thủ công";
+    res.pa1 = "Lái xe - chưa có ma trận, kiểm tra thủ công theo lịch Lái xe (đảm bảo ≥12h nghỉ).";
+    res.pa2 = donCaLaiXe(ngayNghi, caNghi);
+    res.pa3 = "Lái xe - chưa có ma trận, kiểm tra thủ công.";
+    res.equivDisplay = "";
+    res.pa4 = "Không áp dụng cho Lái xe chuyên dụng (chỉ có 1 vị trí, không có vị trí tương đương).";
+    res.pa5 = "Xem PA 6-9 (nguyên tắc chung): điều người trực HC / báo Quản đốc.";
+    res.cong22 = "";
+    return res;
+  }
+  if(isWholeDay){
+    res.g = "Cả ngày — cần xét riêng cả 3 ca V1/V2/V3, xem sheet/bảng Ma trận điều ca lọc theo ngày này.";
+    res.h = ""; res.iVerdict = "Xem Ma trận điều ca (3 dòng V1/V2/V3)";
+    res.pa1 = res.pa3 = "Xem Ma trận điều ca cho cả 3 ca.";
+    res.equivDisplay = equivDisplay(vitri);
+    res.pa2 = "Xem Ma trận điều ca cho cả 3 ca.";
+    res.pa4 = res.pa5 = "Xem Ma trận điều ca cho cả 3 ca.";
+    res.cong22 = "";
+    return res;
+  }
+
+  const idx = DATE_INDEX.get(ngayNghi);
+  if(idx===undefined){
+    res.error = "Ngày nghỉ ngoài phạm vi dữ liệu (chỉ hỗ trợ 01/08/2026 - 30/09/2026).";
+    return res;
+  }
+  const month = monthOfDate(ngayNghi);
+  const cands = evaluateCandidates(idx, ca);
+  const usable = cands.filter(c=>c.verdict==="GREEN"||c.verdict==="YELLOW");
+  const primary = usable[0]||null;
+  const backup = usable[1]||null;
+  const allUnknown = cands.length>0 && cands.every(c=>c.verdict==="UNKNOWN");
+
+  const equiv = DATA.equivMap[vitri]||[];
+  const equiv1 = equiv[0]||"", equiv2 = equiv[1]||"";
+  res.equivDisplay = equivDisplay(vitri);
+
+  const FALLBACK_MSG = "Không có kíp bù an toàn tại chỗ — dùng PHƯƠNG ÁN 4 (đôn ca) hoặc PA 5 (vòng 2 ngày) / PA 6-9.";
+
+  if(!primary){
+    res.g = "—"; res.h = "—";
+    res.iVerdict = allUnknown ? "⚪ Ngoài phạm vi dữ liệu — cần xác nhận thủ công theo lịch tháng liền kề" : VERDICT_ICON.RED;
+    res.pa1 = FALLBACK_MSG;
+    res.pa4 = FALLBACK_MSG;
+    res.pa5 = equiv2 ? FALLBACK_MSG : (DATA.multiPersonRoles.includes(vitri) ? "Người dự phòng còn lại cùng kíp, cùng vị trí." : "Xem PA 6-9: điều người trực HC / tập sự / báo Quản đốc.");
+    res.cong22 = "";
+  } else {
+    res.g = primary.kip; res.h = backup? backup.kip : "—";
+    res.iVerdict = VERDICT_ICON[primary.verdict];
+    res.pa1 = `${rosterStr(vitri, primary.kip)} (kíp ${primary.kip})`;
+    res.pa4 = equiv1 ? `${rosterStr(equiv1, primary.kip)} — vị trí ${equiv1} (kíp ${primary.kip})` : "Không có vị trí tương đương — xem PHƯƠNG ÁN 3.";
+    res.pa5 = equiv2 ? `${rosterStr(equiv2, primary.kip)} — vị trí ${equiv2} (kíp ${primary.kip})`
+      : (DATA.multiPersonRoles.includes(vitri) ? "Người dự phòng còn lại cùng kíp, cùng vị trí (xem Danh sách kíp)." : "Xem PA 6-9: điều người trực HC / tập sự / báo Quản đốc.");
+    const adv = congAdvisory(primary.kip, month);
+    res.cong22 = adv.html; res.cong22Level = adv.level;
+  }
+
+  // PHUONG AN 2 (don ca thuong / vong cho ca dem)
+  res.pa2 = donCaThuong(vitri, idx, ca);
+  // PHUONG AN 3 (don ca vong 2 ngay) - chi cho V1/V2
+  res.pa3 = donCaVong(vitri, idx, ca);
+
+  return res;
+}
+
+function equivDisplay(vitri){
+  const eq = DATA.equivMap[vitri]||[];
+  return eq.join(" / ");
+}
+
+function kipAt(idx, field){
+  if(idx<0 || idx>=DATA.daysMain.length) return null;
+  return DATA.daysMain[idx][field];
+}
+function nameOrRange(vitri, kip, label){
+  if(kip===null) return `(${label} ngoài phạm vi dữ liệu — cần xác nhận thủ công)`;
+  return `${rosterStr(vitri,kip)} (kíp ${kip})`;
+}
+
+function donCaThuong(vitri, idx, ca){
+  if(ca==="V1"){
+    const v2 = kipAt(idx,"v2"), v3 = kipAt(idx,"v3"), v3y = kipAt(idx-1,"v3");
+    return `Đôn: ${nameOrRange(vitri,v2,"kíp ca chiều")} (đang ca chiều) → lên ca sáng; ${nameOrRange(vitri,v3,"kíp ca đêm")} (đang ca đêm) → lên ca chiều; `+
+      `bổ sung 1 người ca đêm — gợi ý: ${nameOrRange(vitri,v3y,"kíp ca đêm hôm qua")} (đã làm ca đêm hôm qua, đủ giờ nghỉ).`;
+  }
+  if(ca==="V2"){
+    const v3 = kipAt(idx,"v3"), v3y = kipAt(idx-1,"v3");
+    return `Đôn: ${nameOrRange(vitri,v3,"kíp ca đêm")} (đang ca đêm) → lên ca chiều; bổ sung 1 người ca đêm — gợi ý: ${nameOrRange(vitri,v3y,"kíp ca đêm hôm qua")} (đã làm ca đêm hôm qua, đủ giờ nghỉ).`;
+  }
+  if(ca==="V3"){
+    // Uu tien: kieu "don xuong" - muon kip von xep ca sang NGAY MAI vao truc ca sang (V1) HOM NAY
+    // som 1 ngay, roi don ca sang(hom nay)->ca chieu, ca chieu(hom nay)->ca dem (thay nguoi nghi).
+    // Chi dung khi CA 3 buoc deu an toan >=12h (da kiem tra tung buoc, khong gia dinh) - vi trong
+    // giai doan bat thuong (VD ranh gioi BDSC) chuoi ke tiep cua kip dang truc co the KHONG khop.
+    // Neu khong an toan, roi ve cach VONG (chi can 1 buoc nhung anh huong cong cua 2 nguoi).
+    const cands = evaluateCandidates(idx, "V1");
+    const usable = cands.filter(c=>c.verdict==="GREEN"||c.verdict==="YELLOW");
+    const q = usable[0] || null;
+    const k1 = kipAt(idx,"v1"), k2 = kipAt(idx,"v2");
+    let cascadeSafe = false, k1Chk=null, k2Chk=null;
+    if(q && k1 && k2){
+      k1Chk = evaluateKipForShift(k1, idx, "V2");
+      k2Chk = evaluateKipForShift(k2, idx, "V3");
+      cascadeSafe = k1Chk.verdict==="GREEN" && k2Chk.verdict==="GREEN";
+    }
+    if(q && cascadeSafe){
+      return `Đôn: ${nameOrRange(vitri,q.kip,"kíp ca sáng ngày mai")} (vốn xếp CA SÁNG NGÀY MAI, đôn sớm 1 ngày) vào trực CA SÁNG (V1) HÔM NAY; `+
+        `đôn ${nameOrRange(vitri,k1,"kíp ca sáng")} (đang ca sáng) xuống trực ca chiều (V2); `+
+        `đôn ${nameOrRange(vitri,k2,"kíp ca chiều")} (đang ca chiều) xuống trực ca đêm (V3) thay người nghỉ. `+
+        `Đã kiểm tra an toàn ≥12h cho cả 3 người — CHỈ ảnh hưởng 22 công của 1 người (kíp ${q.kip}), ít xáo trộn hơn phương án vòng 2 ngày (PA5) nên ưu tiên dùng cách này trước.`;
+    }
+    const v1t = kipAt(idx+1,"v1"), v1t2 = kipAt(idx+2,"v1");
+    return `Ca đêm là ca cuối trong ngày; cách đôn trực tiếp (mượn kíp ca sáng ngày mai vào trực ca sáng hôm nay rồi đôn xuống) không đủ an toàn ≥12h trong trường hợp này — dùng cách VÒNG: `+
+      `${nameOrRange(vitri,v1t,"kíp ca sáng ngày mai")} (vốn xếp CA SÁNG NGÀY MAI, đôn sớm 1 ca xuống trực ca đêm HÔM NAY thay người nghỉ); `+
+      `khi đó ca sáng NGÀY MAI cần bổ sung — gợi ý: ${nameOrRange(vitri,v1t2,"kíp ca sáng ngày mốt")} (vốn xếp ca sáng NGÀY MỐT, đôn sớm 1 ngày). LƯU Ý: ảnh hưởng 22 công của CẢ 2 người này, cần rà soát Bảng công tháng.`;
+  }
+  return "";
+}
+function donCaVong(vitri, idx, ca){
+  if(ca==="V3") return "Ca đêm chỉ có 1 cách đôn ca (kiểu vòng) — đã đưa vào PHƯƠNG ÁN 4, không có PA5 riêng cho ca này.";
+  const v1t = kipAt(idx+1,"v1"), v1t2 = kipAt(idx+2,"v1");
+  if(ca==="V1"){
+    const v2 = kipAt(idx,"v2"), v3 = kipAt(idx,"v3");
+    return `Đôn: ${nameOrRange(vitri,v2,"kíp ca chiều")} (đang ca chiều) → lên ca sáng; ${nameOrRange(vitri,v3,"kíp ca đêm")} (đang ca đêm) → lên ca chiều; `+
+      `bổ sung ca đêm HÔM NAY — gợi ý: ${nameOrRange(vitri,v1t,"kíp ca sáng ngày mai")} (vốn xếp CA SÁNG NGÀY MAI, đôn sớm 1 ca sang ca đêm hôm nay); `+
+      `khi đó ca sáng NGÀY MAI cần bổ sung — gợi ý: ${nameOrRange(vitri,v1t2,"kíp ca sáng ngày mốt")} (vốn xếp ca sáng NGÀY MỐT, đôn sớm 1 ngày). `+
+      `LƯU Ý: ảnh hưởng 22 công của CẢ 2 người này — chỉ dùng khi PA1 và PA4 tại chỗ không khả dụng.`;
+  }
+  if(ca==="V2"){
+    const v3 = kipAt(idx,"v3");
+    return `Đôn: ${nameOrRange(vitri,v3,"kíp ca đêm")} (đang ca đêm) → lên ca chiều; `+
+      `bổ sung ca đêm HÔM NAY — gợi ý: ${nameOrRange(vitri,v1t,"kíp ca sáng ngày mai")} (vốn xếp CA SÁNG NGÀY MAI, đôn sớm 1 ca sang ca đêm hôm nay); `+
+      `khi đó ca sáng NGÀY MAI cần bổ sung — gợi ý: ${nameOrRange(vitri,v1t2,"kíp ca sáng ngày mốt")} (vốn xếp ca sáng NGÀY MỐT, đôn sớm 1 ngày). `+
+      `LƯU Ý: ảnh hưởng 22 công của CẢ 2 người này — chỉ dùng khi PA1 và PA4 tại chỗ không khả dụng.`;
+  }
+  return "";
+}
+function donCaLaiXe(ngayNghi, caNghi){
+  const idx = DATE_INDEX_LX.get(ngayNghi);
+  if(idx===undefined) return "Ngoài phạm vi dữ liệu lịch Lái xe.";
+  const d = DATA.daysLx[idx];
+  const dY = DATA.daysLx[idx-1];
+  const name = k => (DATA.laixeRoster[k]||[]).join(", ");
+  if(caNghi==="Ca sáng"){
+    return `Đôn: ${name(d.v2)} (đang ca chiều) → lên ca sáng; ${name(d.v3)} (đang ca đêm) → lên ca chiều; bổ sung 1 người ca đêm — gợi ý: ${dY?name(dY.v3):"(ngoài dữ liệu)"} (đã làm ca đêm hôm qua).`;
+  }
+  if(caNghi==="Ca chiều"){
+    return `Đôn: ${name(d.v3)} (đang ca đêm) → lên ca chiều; bổ sung 1 người ca đêm — gợi ý: ${dY?name(dY.v3):"(ngoài dữ liệu)"} (đã làm ca đêm hôm qua).`;
+  }
+  return "Ca đêm là ca cuối trong ngày — không đôn được, kiểm tra thủ công theo lịch Lái xe.";
+}
+</script>
+<script>
+// ---------------- Navigation ----------------
+document.querySelectorAll('.nav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-'+btn.dataset.view).classList.add('active');
+    window.scrollTo({top:0,behavior:'instant'});
+  });
+});
+
+// ---------------- Overview stat cards ----------------
+(function(){
+  const totalDays = DATA.daysMain.length;
+  const congA8 = congForKip('A',8), congB8=congForKip('B',8), congC8=congForKip('C',8), congD8=congForKip('D',8), congE8=congForKip('E',8);
+  const cards = [
+    {t:"Khoảng dữ liệu", v:"01/08 – 30/09/2026", s: totalDays+" ngày, nhóm chính 5 kíp"},
+    {t:"Kíp B nghỉ đảo ca (BDSC)", v:"20/08 – 13/09", s:"Đi hành chính hỗ trợ bảo dưỡng sửa chữa định kỳ"},
+    {t:"Vị trí quản lý", v: DATA.roles.length+" + Lái xe + Đá vôi/Thạch cao", s:"Xem chi tiết ở Danh sách kíp"},
+  ];
+  const wrap = document.getElementById('statCards');
+  wrap.innerHTML = cards.map(c=>`<div class="card"><div class="muted small" style="text-transform:uppercase;letter-spacing:.4px;font-weight:700;">${c.t}</div><div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);margin:6px 0 4px;">${c.v}</div><div class="muted small">${c.s}</div></div>`).join('');
+})();
+
+// ---------------- Calendar ----------------
+const DOW = ["T2","T3","T4","T5","T6","T7","CN"];
+function renderCalendar(){
+  const group = document.getElementById('calGroup').value;
+  const month = parseInt(document.getElementById('calMonth').value,10);
+  const days = (group==='main'?DATA.daysMain:DATA.daysLx).filter(d=>parseInt(d.date.slice(5,7),10)===month);
+  const grid = document.getElementById('calGrid');
+  let html = DOW.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  if(days.length){
+    const firstDow = ["CN","T2","T3","T4","T5","T6","T7"].indexOf(days[0].weekday); // 0=CN..6=T7 mapped -> convert to Mon-first offset
+    const mondayFirstOffset = (["T2","T3","T4","T5","T6","T7","CN"].indexOf(days[0].weekday));
+    for(let i=0;i<mondayFirstOffset;i++) html += `<div class="cal-cell empty"></div>`;
+  }
+  days.forEach(d=>{
+    const isAway = group==='main' && d.date>=DATA.bAwayStart && d.date<=DATA.bAwayEnd;
+    const dnum = d.date.slice(8,10);
+    html += `<div class="cal-cell ${d.weekday==='CN'?'sun':''} ${isAway?'away':''}" data-date="${d.date}" data-group="${group}">
+      <div class="cal-date">${dnum}</div>
+      <div class="cal-shifts">
+        <div class="row"><span class="lbl">S</span><span class="kip-chip k${d.v1}">${d.v1}</span></div>
+        <div class="row"><span class="lbl">C</span><span class="kip-chip k${d.v2}">${d.v2}</span></div>
+        <div class="row"><span class="lbl">Đ</span><span class="kip-chip k${d.v3}">${d.v3}</span></div>
+      </div>
+      <div class="cal-off">Nghỉ: ${d.off.join(', ')}</div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+  document.getElementById('calLegend').innerHTML = KIP_LETTERS.map(k=>`<span><span class="kip-chip k${k}" style="width:18px;height:18px;font-size:10px;">${k}</span> Kíp ${k}</span>`).join('') + `<span>🟨 nền vàng nhạt = giai đoạn kíp B đi BDSC</span>`;
+  grid.querySelectorAll('.cal-cell[data-date]').forEach(cell=>{
+    cell.addEventListener('click', ()=>showDayDetail(cell.dataset.date, cell.dataset.group));
+  });
+}
+function showDayDetail(dateStr, group){
+  const card = document.getElementById('dayDetailCard');
+  card.style.display='block';
+  const days = group==='main'?DATA.daysMain:DATA.daysLx;
+  const idx = (group==='main'?DATE_INDEX:DATE_INDEX_LX).get(dateStr);
+  const d = days[idx];
+  document.getElementById('dayDetailTitle').textContent = `Chi tiết ${fmtVN(dateStr)} (${d.weekday})`;
+  let rows;
+  if(group==='main'){
+    rows = DATA.roles.map(r=>{
+      const cellFor = kip => `<td>${(r.roster[kip]||[]).join(', ')||'—'}</td>`;
+      return `<tr><td><b>${r.name}</b></td><td class="nowrap"><span class="kip-chip k${d.v1}" style="width:20px;height:20px;font-size:10px;">${d.v1}</span></td>${cellFor(d.v1)}<td class="nowrap"><span class="kip-chip k${d.v2}" style="width:20px;height:20px;font-size:10px;">${d.v2}</span></td>${cellFor(d.v2)}<td class="nowrap"><span class="kip-chip k${d.v3}" style="width:20px;height:20px;font-size:10px;">${d.v3}</span></td>${cellFor(d.v3)}</tr>`;
+    }).join('');
+    document.getElementById('dayDetailBody').innerHTML = `<div class="table-wrap"><table><thead><tr><th>Vị trí</th><th>Kíp</th><th>Trực ca sáng (V1)</th><th>Kíp</th><th>Trực ca chiều (V2)</th><th>Kíp</th><th>Trực ca đêm (V3)</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="muted small" style="margin-top:10px;">Kíp đang nghỉ hôm nay: <b>${d.off.join(', ')}</b> — có thể điều đi thay ca (khác kíp, không phạm luật nghỉ 12h).</p>`;
+  } else {
+    const name = k => (DATA.laixeRoster[k]||[]).join(', ');
+    document.getElementById('dayDetailBody').innerHTML = `<div class="table-wrap"><table><thead><tr><th>Ca</th><th>Kíp</th><th>Người trực</th></tr></thead><tbody>
+      <tr><td>Ca sáng (V1)</td><td><span class="kip-chip k${d.v1}">${d.v1}</span></td><td>${name(d.v1)}</td></tr>
+      <tr><td>Ca chiều (V2)</td><td><span class="kip-chip k${d.v2}">${d.v2}</span></td><td>${name(d.v2)}</td></tr>
+      <tr><td>Ca đêm (V3)</td><td><span class="kip-chip k${d.v3}">${d.v3}</span></td><td>${name(d.v3)}</td></tr>
+      </tbody></table></div><p class="muted small" style="margin-top:10px;">Kíp đang nghỉ: <b>${d.off.join(', ')}</b></p>`;
+  }
+  card.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+document.getElementById('calGroup').addEventListener('change', renderCalendar);
+document.getElementById('calMonth').addEventListener('change', renderCalendar);
+renderCalendar();
+
+// ---------------- Tool (Dieu ca) ----------------
+const tVitri = document.getElementById('tVitri');
+tVitri.innerHTML = VITRI_LIST.map(v=>`<option>${v}</option>`).join('');
+function runTool(){
+  const vitri = tVitri.value, kip = document.getElementById('tKip').value;
+  const ngay = document.getElementById('tNgay').value, ca = document.getElementById('tCa').value;
+  const r = computeSuggestion(vitri, kip, ngay, ca);
+  const sBox = document.getElementById('safetySummary');
+  const results = document.getElementById('paResults');
+  if(r.error){
+    sBox.innerHTML = `<div class="pill red">⚠ ${r.error}</div>`;
+    results.innerHTML='';
+    return;
+  }
+  sBox.innerHTML = `
+    <div style="margin-bottom:10px;"><b>${r.vitri}</b> — kíp ${r.kip} — nghỉ ${r.caNghi} ngày ${fmtVN(r.ngayNghi)}</div>
+    <div class="grid2" style="gap:10px;">
+      <div><div class="muted small">Kíp bù ưu tiên</div><div style="font-size:16px;font-weight:800;color:var(--navy);">${r.g}</div></div>
+      <div><div class="muted small">Kíp bù dự phòng</div><div style="font-size:16px;font-weight:800;color:var(--navy);">${r.h||'—'}</div></div>
+    </div>
+    <div style="margin-top:10px;">${r.iVerdict}</div>
+    ${r.equivDisplay? `<div class="muted small" style="margin-top:8px;">Vị trí tương đương: <b>${r.equivDisplay}</b></div>`:''}
+  `;
+  const paList = [
+    {n:1, title:"Đổi ca cùng vị trí (kíp bù ưu tiên)", body:r.pa1, prio:true},
+    {n:2, title:"Điều chéo vị trí tương đương 1", body:r.pa4, prio:true},
+    {n:3, title:"Điều chéo vị trí tương đương 2 / dự phòng / HC", body:r.pa5, prio:true},
+    {n:4, title:"Đôn ca trong ngày (dồn ca lên)", body:r.pa2},
+    {n:5, title:"Đôn ca vòng 2 ngày (chỉ dùng khi PA1, PA4 không khả dụng)", body:r.pa3},
+  ];
+  results.innerHTML = paList.map((p,i)=>`
+    <div class="result-box ${p.prio?'pa-priority':''}">
+      <h3><span><span class="num">${p.n}</span>${p.title}</span></h3>
+      <p>${p.body||'<span class="muted">(không áp dụng)</span>'}</p>
+      ${p.body? `<button class="btn-sm rem-save-btn" data-pa-idx="${i}">💾 Lưu nhắc nhở cho phương án này</button>`:''}
+    </div>`).join('') + (r.cong22? `<div class="warn-22 ${r.cong22Level==='ok'?'ok':''}">📊 ${r.cong22}</div>` : '');
+  results.querySelectorAll('.rem-save-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const p = paList[parseInt(btn.dataset.paIdx,10)];
+      window.__saveReminderFromTool && window.__saveReminderFromTool(r, p.n, p.title, p.body);
+    });
+  });
+}
+document.getElementById('tCalc').addEventListener('click', runTool);
+runTool();
+
+// ---------------- Reminders (nhac nho dieu ca truoc 1 ngay) ----------------
+const REM_KEY = 'pxnl_dieuca_reminders_v1';
+const REM_SETTINGS_KEY = 'pxnl_dieuca_settings_v1';
+let remindersMem = [];
+let settingsMem = {};
+let storageOK = true;
+try{ const t='__pxnl_test__'; localStorage.setItem(t,'1'); localStorage.removeItem(t); }catch(e){ storageOK = false; }
+
+function loadReminders(){
+  if(!storageOK) return remindersMem;
+  try{ return JSON.parse(localStorage.getItem(REM_KEY)||'[]'); }catch(e){ return []; }
+}
+function saveReminders(list){
+  if(!storageOK){ remindersMem = list; return; }
+  try{ localStorage.setItem(REM_KEY, JSON.stringify(list)); }catch(e){}
+}
+function loadSettings(){
+  if(!storageOK) return settingsMem;
+  try{ return JSON.parse(localStorage.getItem(REM_SETTINGS_KEY)||'{}'); }catch(e){ return {}; }
+}
+function saveSettings(s){
+  if(!storageOK){ settingsMem = s; return; }
+  try{ localStorage.setItem(REM_SETTINGS_KEY, JSON.stringify(s)); }catch(e){}
+}
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function daysBetween(dateStr, baseStr){
+  const a = new Date(dateStr+'T00:00:00'), b = new Date(baseStr+'T00:00:00');
+  return Math.round((a-b)/86400000);
+}
+function reminderStatus(r){
+  if(r.acked) return 'done';
+  const diff = daysBetween(r.ngayThucHien, todayStr());
+  if(diff < 0) return 'past';
+  if(diff === 0) return 'today';
+  if(diff === 1) return 'tomorrow';
+  return 'upcoming';
+}
+const REM_STATUS_LABEL = {tomorrow:'🔔 Ngày mai — cần nhắc ngay', today:'⏰ Hôm nay', upcoming:'Sắp tới', past:'Đã qua', done:'✔️ Đã xác nhận'};
+const REM_STATUS_CLASS = {tomorrow:'rem-urgent', today:'rem-today', upcoming:'rem-upcoming', past:'rem-past', done:'rem-done'};
+
+function addReminder(obj){
+  const list = loadReminders();
+  obj.id = 'r'+Date.now()+Math.random().toString(36).slice(2,7);
+  obj.createdAt = todayStr();
+  obj.acked = false;
+  list.push(obj);
+  saveReminders(list);
+  renderReminders();
+}
+function removeReminder(id){ saveReminders(loadReminders().filter(r=>r.id!==id)); renderReminders(); }
+function toggleAck(id){
+  const list = loadReminders();
+  const it = list.find(r=>r.id===id);
+  if(it) it.acked = !it.acked;
+  saveReminders(list);
+  renderReminders();
+}
+function mailtoLink(to, subject, body){
+  const params = [];
+  if(subject) params.push('subject='+encodeURIComponent(subject));
+  if(body) params.push('body='+encodeURIComponent(body));
+  return 'mailto:'+(to?to.trim():'')+(params.length? '?'+params.join('&') : '');
+}
+function buildReminderEmailToSub(r){
+  const subject = `[Nhắc lịch trực thay] Ngày ${fmtVN(r.ngayThucHien)} — ${r.caNghi}`;
+  const body = `Chào ${r.nguoiDuocDieu||'anh/chị'},\n\n`+
+    `Xin nhắc: theo phương án điều ca${r.paSo? ' (PA'+r.paSo+')':''}, anh/chị được sắp xếp trực thay ${r.caNghi} `+
+    `ngày ${fmtVN(r.ngayThucHien)} tại vị trí ${r.viTri||'(chưa ghi)'}${r.nguoiNghi? ' (thay '+r.nguoiNghi+')':''}.\n\n`+
+    (r.moTa? `Chi tiết: ${r.moTa}\n\n`:'')+
+    `Vui lòng chủ động sắp xếp có mặt đúng giờ. Cảm ơn anh/chị!\n\n— Gửi từ công cụ Lịch trực ca & Điều ca, PX Nhiên liệu`;
+  return mailtoLink(r.emailDuocDieu||'', subject, body);
+}
+function buildReminderEmailToSelf(r){
+  const s = loadSettings();
+  const subject = `[Tự nhắc] Điều ca ngày ${fmtVN(r.ngayThucHien)} — ${r.caNghi}`;
+  const body = `Nhắc bản thân: ngày ${fmtVN(r.ngayThucHien)} cần thực hiện điều ca ${r.caNghi} tại ${r.viTri||'(chưa ghi)'}`+
+    `${r.paSo? ' (PA'+r.paSo+')':''}${r.nguoiNghi? ' — thay '+r.nguoiNghi:''}.\n`+
+    `Người được điều ca: ${r.nguoiDuocDieu||'(chưa xác định — cần chốt gấp)'}\n\n`+
+    (r.moTa? `Chi tiết: ${r.moTa}\n\n`:'')+
+    `Đừng quên báo/xác nhận với người được điều ca và Trưởng kíp liên quan trước khi ca bắt đầu.`;
+  return mailtoLink(s.emailToi||'', subject, body);
+}
+function renderReminderBanner(){
+  const list = loadReminders().filter(r=>!r.acked);
+  const dueTomorrow = list.filter(r=>reminderStatus(r)==='tomorrow');
+  const dueToday = list.filter(r=>reminderStatus(r)==='today');
+  const banner = document.getElementById('globalReminderBanner');
+  const badge = document.getElementById('navReminderBadge');
+  const urgentCount = dueTomorrow.length + dueToday.length;
+  if(badge){
+    badge.style.display = urgentCount>0 ? 'inline-block' : 'none';
+    badge.textContent = urgentCount>0 ? String(urgentCount) : '';
+  }
+  if(!banner) return;
+  if(urgentCount===0){ banner.innerHTML=''; banner.style.display='none'; return; }
+  banner.style.display='block';
+  const parts = [];
+  if(dueToday.length) parts.push(`<b>${dueToday.length} việc HÔM NAY</b>`);
+  if(dueTomorrow.length) parts.push(`<b>${dueTomorrow.length} việc NGÀY MAI</b>`);
+  banner.innerHTML = `<div class="reminder-banner">🔔 Có ${parts.join(' và ')} cần thực hiện điều ca — <button class="linklike" id="bannerGoTo">xem chi tiết</button></div>`;
+  const gotoBtn = document.getElementById('bannerGoTo');
+  if(gotoBtn) gotoBtn.addEventListener('click', ()=>{ document.querySelector('.nav button[data-view="reminders"]').click(); });
+}
+function renderReminders(){
+  const list = loadReminders().slice().sort((a,b)=> a.ngayThucHien<b.ngayThucHien? -1 : a.ngayThucHien>b.ngayThucHien? 1 : 0);
+  const wrap = document.getElementById('reminderListWrap');
+  if(wrap){
+    if(!list.length){
+      wrap.innerHTML = `<p class="muted small">Chưa có nhắc nhở nào được lưu. Dùng nút "💾 Lưu nhắc nhở" ở mục "Điều ca khi nghỉ phép" sau khi tính phương án, hoặc thêm thủ công ở form bên trên.</p>`;
+    } else {
+      wrap.innerHTML = list.map(r=>{
+        const st = reminderStatus(r);
+        return `<div class="reminder-card ${REM_STATUS_CLASS[st]}">
+          <div class="rem-top">
+            <span class="rem-status">${REM_STATUS_LABEL[st]}</span>
+            <span class="rem-date">${fmtVN(r.ngayThucHien)} · ${r.caNghi||''}</span>
+          </div>
+          <div class="rem-body">
+            <b>${r.viTri||'(chưa ghi vị trí)'}</b>${r.nguoiNghi? ` — thay ${r.nguoiNghi}`:''}${r.paSo? ` · PA${r.paSo}`:''}<br>
+            ${r.nguoiDuocDieu? `Người được điều ca: <b>${r.nguoiDuocDieu}</b>`:'<span class="muted">(chưa ghi người được điều ca cụ thể)</span>'}
+            ${r.moTa? `<div class="muted small" style="margin-top:4px;">${r.moTa}</div>`:''}
+          </div>
+          <div class="rem-actions">
+            <a class="btn-sm" href="${buildReminderEmailToSub(r)}">✉️ Nhắc người được điều ca</a>
+            <a class="btn-sm ghost" href="${buildReminderEmailToSelf(r)}">✉️ Tự nhắc (người sắp lịch)</a>
+            <button class="btn-sm" data-ack="${r.id}">${r.acked?'↩️ Bỏ đánh dấu':'✔️ Đã nhắc / đã xong'}</button>
+            <button class="btn-sm danger" data-del="${r.id}">🗑️ Xoá</button>
+          </div>
+        </div>`;
+      }).join('');
+      wrap.querySelectorAll('[data-ack]').forEach(b=>b.addEventListener('click', ()=>toggleAck(b.dataset.ack)));
+      wrap.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>{ if(confirm('Xoá nhắc nhở này?')) removeReminder(b.dataset.del); }));
+    }
+  }
+  renderReminderBanner();
+}
+(function(){
+  const s = loadSettings();
+  const inp = document.getElementById('remMyEmail');
+  if(inp){
+    inp.value = s.emailToi || '';
+    inp.addEventListener('change', ()=>{ const ss=loadSettings(); ss.emailToi = inp.value.trim(); saveSettings(ss); renderReminders(); });
+  }
+})();
+const remAddBtn = document.getElementById('remAddBtn');
+if(remAddBtn){
+  remAddBtn.addEventListener('click', ()=>{
+    const ngay = document.getElementById('remNgay').value;
+    if(!ngay){ alert('Vui lòng nhập Ngày thực hiện điều ca.'); return; }
+    addReminder({
+      ngayThucHien: ngay,
+      caNghi: document.getElementById('remCa').value,
+      viTri: document.getElementById('remVitri').value.trim(),
+      nguoiNghi: document.getElementById('remNguoiNghi').value.trim(),
+      paSo: document.getElementById('remPA').value.trim(),
+      nguoiDuocDieu: document.getElementById('remNguoiDuoc').value.trim(),
+      emailDuocDieu: document.getElementById('remEmailDuoc').value.trim(),
+      moTa: document.getElementById('remMoTa').value.trim(),
+    });
+    ['remNgay','remVitri','remNguoiNghi','remPA','remNguoiDuoc','remEmailDuoc','remMoTa'].forEach(id=>{ document.getElementById(id).value=''; });
+  });
+}
+window.__saveReminderFromTool = function(r, paNum, title, body){
+  const nguoiDuoc = (prompt('Tên người được điều ca cụ thể (có thể để trống nếu chưa chốt):', '') || '').trim();
+  const emailDuoc = nguoiDuoc ? (prompt('Email người được điều ca (không bắt buộc, để trống nếu chưa có):', '') || '').trim() : '';
+  addReminder({
+    ngayThucHien: r.ngayNghi, caNghi: r.caNghi, viTri: r.vitri, nguoiNghi: `Kíp ${r.kip}`,
+    paSo: String(paNum), nguoiDuocDieu: nguoiDuoc, emailDuocDieu: emailDuoc, moTa: title+': '+body,
+  });
+  alert('Đã lưu vào mục "Nhắc nhở điều ca" — hệ thống sẽ hiện thông báo trước 1 ngày mỗi khi anh/chị mở lại trang này.');
+};
+function maybeNotify(){
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  const due = loadReminders().filter(r=>!r.acked && (reminderStatus(r)==='tomorrow'||reminderStatus(r)==='today'));
+  if(!due.length) return;
+  try{ new Notification('🔔 Nhắc điều ca — PX Nhiên liệu', {body: due.length+' việc điều ca cần thực hiện hôm nay/ngày mai. Mở lại trang để xem chi tiết.'}); }catch(e){}
+}
+const notifyBtn = document.getElementById('remEnableNotify');
+if(notifyBtn){
+  notifyBtn.addEventListener('click', ()=>{
+    if(!('Notification' in window)){ alert('Trình duyệt này không hỗ trợ thông báo popup. Vẫn có thể dùng nút "Tự nhắc" qua email.'); return; }
+    Notification.requestPermission().then(p=>{
+      if(p==='granted'){ alert('Đã bật. Mỗi lần mở lại trang, nếu có việc cần trong hôm nay/ngày mai, trình duyệt sẽ hiện thông báo popup.'); maybeNotify(); }
+      else if(p==='denied'){ alert('Trình duyệt đã chặn thông báo cho trang này — có thể bật lại trong cài đặt trình duyệt.'); }
+    });
+  });
+}
+if(!storageOK){
+  const warn = document.getElementById('remStorageWarn');
+  if(warn) warn.style.display='block';
+}
+renderReminders();
+setTimeout(maybeNotify, 1000);
+
+// ---------------- Matrix ----------------
+function buildMatrixRows(){
+  const rows=[];
+  DATA.daysMain.forEach((d,idx)=>{
+    ['V1','V2','V3'].forEach(ca=>{
+      const cands = evaluateCandidates(idx, ca);
+      const usable = cands.filter(c=>c.verdict==='GREEN'||c.verdict==='YELLOW');
+      const primary = usable[0]||null, backup=usable[1]||null;
+      const allUnknown = cands.length>0 && cands.every(c=>c.verdict==='UNKNOWN');
+      const onDuty = ca==='V1'?d.v1:ca==='V2'?d.v2:d.v3;
+      let verdict = primary? primary.verdict : (allUnknown?'UNKNOWN':'RED');
+      let cong22 = '';
+      if(primary){
+        const month = parseInt(d.date.slice(5,7),10);
+        cong22 = congAdvisory(primary.kip, month).html;
+      }
+      rows.push({date:d.date, weekday:d.weekday, ca, onDuty, primary, backup, verdict, cong22});
+    });
+  });
+  return rows;
+}
+const MATRIX_ROWS = buildMatrixRows();
+function renderMatrix(){
+  const month = parseInt(document.getElementById('mxMonth').value,10);
+  const caF = document.getElementById('mxCa').value;
+  const vF = document.getElementById('mxVerdict').value;
+  let rows = MATRIX_ROWS;
+  if(month) rows = rows.filter(r=>parseInt(r.date.slice(5,7),10)===month);
+  if(caF) rows = rows.filter(r=>r.ca===caF);
+  if(vF) rows = rows.filter(r=>r.verdict===vF);
+  document.getElementById('mxCount').textContent = rows.length+' / '+MATRIX_ROWS.length+' dòng';
+  const body = document.getElementById('mxBody');
+  const frag = rows.map(r=>{
+    const pTxt = r.primary ? `${r.primary.kip} — ${statusText(r.primary.prev, r.primary.prevGap, true)}` : '—';
+    const bTxt = r.backup ? `${r.backup.kip} — ${statusText(r.backup.prev, r.backup.prevGap, true)}` : '—';
+    const bVerdict = r.backup ? VERDICT_ICON[r.backup.verdict] : '—';
+    return `<tr class="${VERDICT_CLASS[r.verdict]}">
+      <td class="nowrap">${fmtVN(r.date)}</td><td>${r.weekday}</td><td>${CA_LABELS[r.ca]}</td>
+      <td>${r.onDuty}</td><td>${pTxt}</td><td>${VERDICT_ICON[r.verdict]}</td>
+      <td>${bTxt}</td><td>${bVerdict}</td><td class="small">${r.cong22||''}</td>
+    </tr>`;
+  }).join('');
+  body.innerHTML = frag;
+}
+['mxMonth','mxCa','mxVerdict'].forEach(id=>document.getElementById(id).addEventListener('change', renderMatrix));
+renderMatrix();
+
+// ---------------- Cong table ----------------
+function renderCongTable(elId, month){
+  const rows = KIP_LETTERS.map(k=>{
+    const c = congForKip(k, month);
+    let pill;
+    if(c>=22) pill = `<span class="pill green">Đủ/vượt 22 công</span>`;
+    else if(c>=18) pill = `<span class="pill yellow">Gần đủ (${c}/22)</span>`;
+    else pill = `<span class="pill grey">${c}/22 công — bổ sung công HC</span>`;
+    return `<tr><td><span class="kip-chip k${k}">${k}</span></td><td style="font-weight:700;">${c}</td><td>${pill}</td></tr>`;
+  }).join('');
+  document.getElementById(elId).innerHTML = rows;
+}
+renderCongTable('congAugBody', 8);
+renderCongTable('congSepBody', 9);
+
+// ---------------- Roster ----------------
+document.getElementById('rosterMainBody').innerHTML = DATA.roles.map(r=>
+  `<tr><td><b>${r.name}</b></td>${KIP_LETTERS.map(k=>`<td>${(r.roster[k]||[]).join('<br>')||'—'}</td>`).join('')}</tr>`
+).join('');
+document.getElementById('rosterLxBody').innerHTML = `<tr>${KIP_LETTERS.map(k=>`<td>${(DATA.laixeRoster[k]||[]).join('<br>')||'—'}</td>`).join('')}</tr>`;
+document.getElementById('rosterDvxtcBody').innerHTML = `<tr>${KIP_LETTERS.map(k=>`<td>${(DATA.dvxtcRoster[k]||[]).join('<br>')||'—'}</td>`).join('')}</tr>`;
+document.getElementById('hcBody').innerHTML = DATA.hanhChinh.map(([name,role,note])=>`<tr><td><b>${name}</b></td><td>${role}</td><td class="muted small">${note||''}</td></tr>`).join('');
+
+// ---------------- Guide ----------------
+document.getElementById('safetyTableBody').innerHTML = ['V1','V2','V3'].map(prev=>{
+  return `<tr><td style="text-align:left;font-weight:700;">${prev} (${prev==='V1'?'06-14h':prev==='V2'?'14-22h':'22-06h'})</td>` +
+    ['V1','V2','V3'].map(shift=>{
+      const gap = GAP.get(prev+'|'+shift);
+      const ok = gap>=12;
+      return `<td class="${ok?'ok':'bad'}">${gap}h ${ok?'✅':'❌'}</td>`;
+    }).join('') + `</tr>`;
+}).join('');
+
+const GUIDE_RULES = [
+  ["1","Đổi ca cùng vị trí, khác kíp (kíp bù ưu tiên)","Tra Ma trận điều ca để lấy kíp đã kiểm tra an toàn ≥12h nghỉ (cả trước lẫn sau) → lấy người CÙNG vị trí ở kíp đó → nhờ trực thay, bố trí nghỉ bù vào 1 trong 2 ngày nghỉ sắp tới để không phát sinh thêm công. Ít xáo trộn nhất — ưu tiên số 1."],
+  ["2","Điều chéo vị trí tương đương 1 — CÙNG CƯƠNG VỊ (thay thế trực tiếp)","CSU01↔CSU02; SR41↔SR42; Băng tải than Tháp 1-2-3↔4-5-6↔7-Bunker — vận hành viên đã được đào tạo, có thể thay thế trực tiếp. Chỉ điều chéo với người KHÁC KÍP (kíp bù ưu tiên đã kiểm tra an toàn), tuyệt đối không lấy người cùng kíp đang trực."],
+  ["3","Điều chéo vị trí tương đương 2 / dùng người dự phòng cùng tổ, cùng vị trí","Nếu vị trí có vị trí tương đương thứ 2 (VD Băng tải than 3 tháp), điều chéo tiếp theo cách trên. Nếu không còn vị trí tương đương: CSU01, CSU02, SR41, SR42 (2 người/kíp) và Tro xỉ (3 người/kíp) — người còn lại cùng vị trí, cùng kíp tạm đảm nhận, báo Trưởng kíp bổ sung giám sát."],
+  ["4","Đôn ca trong ngày (dồn ca lên)","Nghỉ ca sáng (V1): người ca chiều đôn lên ca sáng, người ca đêm đôn lên ca chiều, bổ sung 1 người ca đêm bằng người đã trực đêm hôm qua. Nghỉ ca chiều (V2): đôn người ca đêm lên ca chiều, bổ sung ca đêm tương tự. Nghỉ ca đêm (V3): ưu tiên kiểu ĐÔN XUỐNG — mượn người vốn xếp ca sáng NGÀY MAI vào trực ca sáng HÔM NAY sớm 1 ngày, rồi đôn người đang ca sáng hôm nay xuống ca chiều, người đang ca chiều hôm nay xuống ca đêm (thay người nghỉ); cách này chỉ ảnh hưởng 22 công của 1 người nên ưu tiên hơn. Nếu chuỗi kế tiếp không đủ an toàn ≥12h (hiếm gặp, thường ở ranh giới giai đoạn BDSC), hệ thống tự chuyển sang kiểu VÒNG — mượn người vốn xếp ca sáng ngày mai xuống trực ca đêm hôm nay, rồi bù ca sáng ngày mai bằng người vốn xếp ca sáng ngày mốt (ảnh hưởng 22 công của 2 người)."],
+  ["5","Đôn ca VÒNG 2 ngày (chỉ dùng khi PA1, PA4 không khả dụng)","Áp dụng khi nghỉ ca sáng/ca chiều mà cả 2 kíp rảnh hôm đó đều không an toàn: vẫn đôn ca như PA4, nhưng bù ca đêm hôm nay bằng người vốn xếp ca sáng NGÀY MAI (đôn sớm 1 ca), rồi bù ca sáng ngày mai bằng người vốn xếp ca sáng NGÀY MỐT (đôn sớm 1 ngày). Ảnh hưởng 22 công của CẢ 2 người nên chỉ dùng sau PA1/PA4."],
+  ["6","Điều động nhân sự đang trực hành chính","Xem bảng Trực hành chính — một số vị trí có người tạm rời ca hỗ trợ công tác khác, có thể được Quản đốc/Phó Quản đốc điều động trở lại khi cấp thiết."],
+  ["7","Bố trí nhân sự tập sự (T/S) đã đủ điều kiện","Với vị trí có nhân sự T/S kèm cặp, nếu người chính thức nghỉ, xem xét bố trí T/S trực có người có kinh nghiệm giám sát trực tiếp."],
+  ["8","Đổi ca thuận theo chu kỳ (mượn kíp liền kề)","Ưu tiên mượn người ở kíp vừa kết thúc ca đêm hôm trước hoặc sắp vào ca sáng hôm sau (vòng quay E→A→C→B→D→E) — thuận tiện bàn giao, ít ảnh hưởng nhịp sinh học."],
+  ["9","Báo cáo Quản đốc/Phó Quản đốc quyết định điều chuyển","Nếu không còn phương án khả thi (nghỉ dài ngày, nhiều người nghỉ trùng ngày), Trưởng kíp báo cáo Quản đốc/Phó QĐ để quyết định điều chuyển nhân sự giữa các Phân xưởng hoặc thuê ngoài nếu cần."],
+];
+document.getElementById('guideRulesBody').innerHTML = GUIDE_RULES.map(([n,t,b])=>`<tr><td style="font-weight:800;color:var(--navy);">${n}</td><td><b>${t}</b></td><td>${b}</td></tr>`).join('');
+document.getElementById('equivBody').innerHTML = VITRI_LIST.filter(v=>v!=='Lái xe chuyên dụng').map(v=>{
+  const eq = DATA.equivMap[v]||[];
+  return `<tr><td><b>${v}</b></td><td>${eq.length?eq.join(' / '):'<span class="muted">Không có vị trí tương đương</span>'}</td></tr>`;
+}).join('');
+</script>
+</body>
+</html>
